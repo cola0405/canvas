@@ -1,0 +1,94 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <canvas id="canvas" style="background-color: #212121;"></canvas>
+</body>
+
+<script>
+    var cvs = document.getElementById("canvas");
+    var ctx = cvs.getContext("2d");
+    init()
+
+    function init(){
+        cvs.style.height = window.innerHeight;
+        cvs.style.width = window.innerWidth;
+        cvs.height = window.innerHeight * devicePixelRatio;
+        cvs.width = window.innerWidth * devicePixelRatio;
+    }
+    
+
+    class Point{
+        constructor(){
+            this.x = Math.random()*cvs.width;
+            this.y = Math.random()*cvs.height;
+            this.xSpeed = Math.random()*0.6;
+            this.ySpeed = Math.random()*0.6;
+        }
+    }
+
+    class PointGraph{
+        constructor(pointNum=30){
+            this.points = new Array(pointNum).fill(0).map(()=>{
+                return new Point();
+            });
+        }
+    }
+    
+    // draw for anime
+    function draw(points) {
+        ctx.clearRect(0, 0, cvs.width, cvs.height);
+
+        // caculate new coordinate
+        for (var i=0; i<points.length; i++){
+            points[i].x += points[i].xSpeed;
+            points[i].y += points[i].ySpeed;
+
+            if (points[i].x > cvs.width || points[i].x < 0) points[i].xSpeed *= -1;
+            if (points[i].y > cvs.height || points[i].y < 0) points[i].ySpeed *= -1;
+        }
+        
+
+        // draw point
+        for (var i=0; i<points.length; i++){
+            points[i].x;
+            points[i].y;
+            ctx.beginPath();
+            ctx.arc(points[i].x, points[i].y, 3*devicePixelRatio, 0,2*Math.PI);
+            ctx.fill();
+            ctx.fillStyle = "white";
+            ctx.stroke();
+        }
+
+
+        // draw line
+        for(var i=0; i<points.length; i++){
+            for(var j=i+1; j<points.length; j++){
+                ctx.beginPath();
+                ctx.moveTo(points[i].x, points[i].y);
+
+                var d = Math.sqrt(Math.pow((points[i].x-points[j].x),2) + Math.pow((points[i].y-points[j].y),2))
+                var maxDis = 300;
+                var alpha = 1 - d/maxDis;
+
+                ctx.strokeStyle = "rgba(255,255,255,"+ alpha +")";
+                ctx.lineTo(points[j].x, points[j].y);
+                ctx.closePath();
+                ctx.stroke() 
+            }
+        }
+        requestAnimationFrame(function(){
+            draw(points);
+        });
+    };
+
+    
+    var graph = new PointGraph();
+    draw(graph.points);
+    
+</script>
+</html>
